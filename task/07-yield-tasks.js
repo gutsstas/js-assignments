@@ -33,7 +33,17 @@
  *
  */
 function* get99BottlesOfBeer() {
-    throw new Error('Not implemented');
+  let index = 99,
+        ending = index => index > 1 ? 's' : '',
+        bottle = index => index > 0 ? `${index} bottle${ending(index)}` : 'no more bottles';
+
+    while (index >= 1) {
+      yield `${bottle(index)} of beer on the wall, ${bottle(index)} of beer.`
+      yield `Take one down and pass it around, ${bottle(index - 1)} of beer on the wall.`
+      index--;
+    }
+    yield 'No more bottles of beer on the wall, no more bottles of beer.';
+    yield 'Go to the store and buy some more, 99 bottles of beer on the wall.';
 }
 
 
@@ -46,9 +56,18 @@ function* get99BottlesOfBeer() {
  * @return {Iterable.<number>}
  *
  */
-function* getFibonacciSequence() {
-    throw new Error('Not implemented');
-}
+ function* getFibonacciSequence() {
+     let a = 0,
+     b = 1;
+     while (true) {
+         let c = a;
+         a = b;
+         b = a + c;
+         yield c;
+ }
+ }
+    // throw new Error('Not implemented');
+
 
 
 /**
@@ -81,53 +100,80 @@ function* getFibonacciSequence() {
  *  depthTraversalTree(node1) => node1, node2, node3, node4, node5, node6, node7, node8
  *
  */
-function* depthTraversalTree(root) {
-    throw new Error('Not implemented');
-}
+ function* depthTraversalTree(root) {
+     const stack = [root];
+     while (stack.length > 0) {
+         root = stack.pop();
+         yield root;
+         if (typeof root.children !== 'undefined')
+             for (let value of root.children.reverse())
+                 stack.push(value);
+     }
+ }
 
 
-/**
- * Traverses a tree using the breadth-first strategy
- * See details: https://en.wikipedia.org/wiki/Breadth-first_search
- *
- * Each node have child nodes in node.children array.
- * The leaf nodes do not have 'children' property.
- *
- * @params {object} root the tree root
- * @return {Iterable.<object>} the sequence of all tree nodes in breadth-first order
- * @example
- *     source tree (root = 1):
- *
- *            1
- *          / | \
- *         2  3  4
- *        / \     \            =>    { 1, 2, 3, 4, 5, 6, 7, 8 }
- *       5   6     7
- *           |
- *           8
- *
- */
-function* breadthTraversalTree(root) {
-    throw new Error('Not implemented');
-}
+ /**
+  * Traverses a tree using the breadth-first strategy
+  * See details: https://en.wikipedia.org/wiki/Breadth-first_search
+  *
+  * Each node have child nodes in node.children array.
+  * The leaf nodes do not have 'children' property.
+  *
+  * @params {object} root the tree root
+  * @return {Iterable.<object>} the sequence of all tree nodes in breadth-first order
+  * @example
+  *     source tree (root = 1):
+  *
+  *            1
+  *          / | \
+  *         2  3  4
+  *        / \     \            =>    { 1, 2, 3, 4, 5, 6, 7, 8 }
+  *       5   6     7
+  *           |
+  *           8
+  *
+  */
+  function* breadthTraversalTree(root) {
+     const queue = [root];
+     while (queue.length > 0) {
+         root = queue.shift();
+         yield root;
+         if (typeof root.children != 'undefined')
+             for (let value of root.children)
+                 queue.push(value);
+     }
+ }
 
 
-/**
- * Merges two yield-style sorted sequences into the one sorted sequence.
- * The result sequence consists of sorted items from source iterators.
- *
- * @params {Iterable.<number>} source1
- * @params {Iterable.<number>} source2
- * @return {Iterable.<number>} the merged sorted sequence
- *
- * @example
- *   [ 1, 3, 5, ... ], [2, 4, 6, ... ]  => [ 1, 2, 3, 4, 5, 6, ... ]
- *   [ 0 ], [ 2, 4, 6, ... ]  => [ 0, 2, 4, 6, ... ]
- *   [ 1, 3, 5, ... ], [ -1 ] => [ -1, 1, 3, 5, ...]
- */
-function* mergeSortedSequences(source1, source2) {
-    throw new Error('Not implemented');
-}
+ /**
+  * Merges two yield-style sorted sequences into the one sorted sequence.
+  * The result sequence consists of sorted items from source iterators.
+  *
+  * @params {Iterable.<number>} source1
+  * @params {Iterable.<number>} source2
+  * @return {Iterable.<number>} the merged sorted sequence
+  *
+  * @example
+  *   [ 1, 3, 5, ... ], [2, 4, 6, ... ]  => [ 1, 2, 3, 4, 5, 6, ... ]
+  *   [ 0 ], [ 2, 4, 6, ... ]  => [ 0, 2, 4, 6, ... ]
+  *   [ 1, 3, 5, ... ], [ -1 ] => [ -1, 1, 3, 5, ...]
+  */
+ function* mergeSortedSequences(source1, source2) {
+     var src1 = source1(),
+         src2 = source2(),
+         val1 = src1.next().value,
+         val2 = src2.next().value;
+     while (true)
+         if ((val1 < val2 || val2 === undefined) && val1 !== undefined) {
+             yield val1;
+             val1 = src1.next().value;
+         } else if (val2 !== undefined) {
+             yield val2;
+             val2 = src2.next().value;
+         } else
+             break;
+ }
+
 
 
 module.exports = {
