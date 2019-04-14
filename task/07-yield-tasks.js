@@ -133,17 +133,99 @@ function* get99BottlesOfBeer() {
   *           8
   *
   */
-  function* breadthTraversalTree(root) {
-     const queue = [root];
-     while (queue.length > 0) {
-         root = queue.shift();
-         yield root;
-         if (typeof root.children != 'undefined')
-             for (let value of root.children)
-                 queue.push(value);
-     }
- }
+  class Node {
+    constructor(data = null, prev = null, next = null) {
+      this.data = data;
+      this.prev = prev;
+      this.next = next;
+    }
+  }
 
+  class LinkedList {
+    constructor() {
+      this.length = 0;
+      this._head = null;
+      this._tail = null;
+    }
+
+    append(data) {
+      var node = new Node(data);
+
+      if (this.length === 0) {
+        this._head = node;
+        this._tail = node;
+      } else {
+        this._tail.next = node;
+        node.prev = this._tail;
+        this._tail = node;
+      }
+
+      this.length++;
+      return this;
+    }
+
+    nodeAt(index) {
+      var currentNode = this._head;
+      var length = this.length;
+      var count = 0;
+      var message = {
+        failure: 'Failure: non-existent node in this list.'
+      };
+
+      if (length === 0 || index < 0 || index > length) {
+        throw new Error(message.failure);
+      }
+
+      while (count < index) {
+        currentNode = currentNode.next;
+        count++;
+      }
+      return currentNode;
+    }
+
+    deleteAt(index) {
+      if (this.length === 0) {
+        return;
+      }
+      if (index < 0 || index >= this.length) {
+        var message = {
+          failure: 'Failure: non-existent node in this list.'
+        };
+        throw new Error(message.failure);
+      }
+      if (this.length === 1) {
+        this._head.data = null;
+        this._tail.data = null;
+      } else if (index === 0) {
+        this.nodeAt(1).prev = null;
+        this._head = this.nodeAt(1);
+      } else if (index === this.length - 1) {
+        this.nodeAt(index - 1).next = null;
+        this._tail = this.nodeAt(index - 1);
+      } else {
+        this.nodeAt(index - 1).next = this.nodeAt(index + 1);
+        this.nodeAt(index + 1).prev = this.nodeAt(index - 1);
+      }
+      this.length--;
+      return this;
+    }
+  }
+
+  function* breadthTraversalTree(root) {
+    let queue = new LinkedList();
+    queue.append(root);
+
+    while (queue.length) {
+      let n = new Node();
+      n.data = queue._head.data;
+      queue.deleteAt(0);
+
+      if (n.data.children) {
+        n.data.children.forEach(x => queue.append(x));
+      }
+      yield n.data;
+    }
+  }
 
  /**
   * Merges two yield-style sorted sequences into the one sorted sequence.

@@ -62,10 +62,18 @@ function parseBankAccount(bankAccount) {
  *                                                                                                'sequence of',
  *                                                                                                'characters.'
  */
-function* wrapText(text, columns) {
-    throw new Error('Not implemented');
+ function* wrapText(text, columns) {
+  const out = text.split(' ');
+  while (out.length){
+    if (out.length > 1 && out[0].length + out[1].length + 1 <= columns) {
+      out[0] += ' ' + out[1];
+      out.splice(1, 1);
+    } else {
+      yield out[0];
+      out.splice(0, 1);
+    }
+  }
 }
-
 
 /**
  * Returns the rank of the specified poker hand.
@@ -110,10 +118,10 @@ function getPokerHandRank(hand) {
  * The task is to break the figure in the rectangles it is made of.
  *
  * NOTE: The order of rectanles does not matter.
- * 
+ *
  * @param {string} figure
  * @return {Iterable.<string>} decomposition to basic parts
- * 
+ *
  * @example
  *
  *    '+------------+\n'+
